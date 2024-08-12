@@ -1,0 +1,59 @@
+.my-root {
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  background-color: #242424;
+}
+
+.header {
+  background-color: lightblue;
+  width: 100%;
+  height: 10%;
+  margin-bottom: 20px;
+}
+
+.target-grid {
+  width: 280px;
+  height: 280px;
+  background-color: white;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* justify-content: centre; */
+}
+
+.grid-cell {
+  width: 26px;
+  height: 26px;
+  background-color: lightslategray;
+  margin: 1px;
+  cursor: pointer;
+  /* transition-duration: 0.3s; */
+}
+
+.grid-cell:hover {
+  opacity: 0.7;
+}
+
+.grid-cell-water {
+  width: 26px;
+  height: 26px;
+  background-color: lightskyblue;
+  color: white;
+  margin: 1px;
+  cursor: pointer;
+  transition-duration: 0.05s;
+}
+
+.grid-cell-boat {
+  width: 26px;
+  height: 26px;
+  background-color: rgb(18, 46, 82);
+  color: darkgrey;
+  margin: 1px;
+  cursor: pointer;
+  transition-duration: 0.05s;
+  padding: 3px;
+  text-align: center;
+}
