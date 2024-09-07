@@ -9,7 +9,6 @@ function App() {
   return (
     <> 
     <MyRoot>
-
     <Header></Header>
 
     <TargetGrid></TargetGrid>
