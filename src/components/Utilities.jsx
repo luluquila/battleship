@@ -43,7 +43,7 @@ function setBoat(boatSize, gridCells) {
     console.log('random row or column ', randomRowOrColumn);
     const arrayOfRowOrColumn = getArrayOfRowOrColumn(direction, randomRowOrColumn, gridCells); // in index, deal with gridCells later. also, const or let?
     console.log('array of row or column ', arrayOfRowOrColumn);
-    const availableCells = getAvailableCells(arrayOfRowOrColumn, boatSize); // const or let?
+    const availableCells = getAvailableCells(arrayOfRowOrColumn, boatSize, direction); // const or let?
     console.log('available cells length', availableCells.length);
 
 
@@ -96,14 +96,14 @@ function getArrayOfRowOrColumn(direction, rowOrColumn, gridCells) {
 }
 
 
-function getAvailableCells(arrayOfRowOrColumn, boatSize) {
+function getAvailableCells(arrayOfRowOrColumn, boatSize, direction) {
 
   // const nestedArraysOfAvailableRanges = []; // this is going to be an array of arrays
-  const singleArrayOfAvailableRanges = getSingleArrayOfAvailableRanges(arrayOfRowOrColumn); // this comes before the nested one
+  const singleArrayOfAvailableRanges = getSingleArrayOfAvailableRanges(arrayOfRowOrColumn).filter((boat) => boat != null); // this comes before the nested one
   console.log('single array of available ranges', singleArrayOfAvailableRanges);
 
 
-  const nestedArraysOfAvailableRanges = getNestedArraysOfAvailableRanges(singleArrayOfAvailableRanges).filter((array) => array.length >= boatSize);
+  const nestedArraysOfAvailableRanges = getNestedArraysOfAvailableRanges(singleArrayOfAvailableRanges, direction).filter((array) => array.length >= boatSize);
 
   console.log('nested array of available ranges', nestedArraysOfAvailableRanges);
 
@@ -133,35 +133,45 @@ function getSingleArrayOfAvailableRanges(arrayOfRowOrColumn) {
 
 }
 
-function getNestedArraysOfAvailableRanges(singleArrayOfAvailableRanges) {
+function getNestedArraysOfAvailableRanges(singleArrayOfAvailableRanges, direction) {
+
   const returnNestedArray = [];
 
-  const indexesOfNulls = [];
+  let outterIndex = 0;
+  let innerIndex = 0;
 
 
-  for (let i = 0; i < 10; i++) {
-    if (singleArrayOfAvailableRanges[i] === null) {
-      indexesOfNulls.push(i);
+  for(let i = 0; i < singleArrayOfAvailableRanges.length - 1; i++) {
+    if (isThisBoatImmediatelyBeforeThisOther(singleArrayOfAvailableRanges[i], singleArrayOfAvailableRanges[i+1], direction)) {
+      returnNestedArray[outterIndex][innerIndex] = singleArrayOfAvailableRanges[i];
+      outterIndex++;
+      innerIndex = 0;
+
+      // If this is the last iteration, and it is the case that the second last is not one less than the last, so this. Can't have another iteration, since i+1 would be out of bounds.
+      if (i = singleArrayOfAvailableRanges.length - 2) {
+        returnNestedArray[outterIndex][innerIndex] = singleArrayOfAvailableRanges[i];
+      }
+    } else {
+      returnNestedArray[outterIndex][innerIndex] = singleArrayOfAvailableRanges[i];
+      innerIndex++;
     }
   }
 
-  if(singleArrayOfAvailableRanges[0] != null && indexesOfNulls.length != 0) {
-    returnNestedArray.push(singleArrayOfAvailableRanges.slice(0, indexesOfNulls[0]));
-  }
-
-  for (let index = 1; index < indexesOfNulls.length; index++) {
-    returnNestedArray.push(singleArrayOfAvailableRanges.slice(indexesOfNulls[index - 1] + 1, indexesOfNulls[index]));
-  }
-
-  console.log('here', indexesOfNulls[indexesOfNulls.length - 1]);
-
-  returnNestedArray.push(singleArrayOfAvailableRanges.slice(indexesOfNulls[indexesOfNulls.length - 1] + 1));
-
-  console.log('return nested array ', returnNestedArray);
-
   return returnNestedArray;
+}
+
+function isThisBoatImmediatelyBeforeThisOther(boatOne, boatTwo, direction) {
+  let returnBoolean;
+  if (direction == 'x') {
+    returnBoolean =  cellIdToColIndex(boatOne.id) + 1 == cellIdToColIndex(boatTwo.id);
+  } else {
+    returnBoolean =  cellIdToRowIndex(boatOne.id) + 1 == cellIdToRowIndex(boatTwo.id);
+  }
+
+  return returnBoolean;
 
 }
+
 
 
 function chooseTheBoat(availableCells, boatSize){
@@ -188,32 +198,40 @@ function buildTheBoat(chosenBoat) {
 
 function makeProperCellsUnavailable(gridCells, randomRowOrColumn, firstBoatCell, boatSize, direction) {
 
-  const beforeRowOrColumn = getArrayOfRowOrColumn(direction, randomRowOrColumn - 1, gridCells);
-  const indexOfFirstBoatCellOnRowOrColumn = direction === 'x'? cellIdToRowIndex(firstBoatCell.id) : cellIdToColIndex(firstBoatCell.id);
+  const indexOfFirstBoatCellOnRowOrColumn = direction === 'x'? cellIdToColIndex(firstBoatCell.id) : cellIdToRowIndex(firstBoatCell.id);
   console.log('index of first boat cell on row or column ', indexOfFirstBoatCellOnRowOrColumn);
 
-  
-  // beforeRowOrColumn.filter((cell) => )
-  const afterRowOrColumn = getArrayOfRowOrColumn(direction, randomRowOrColumn + 1, gridCells);
 
-  // nestedArraysOfAvailableRanges.filter((array) => array.length >= boatSize);
+  const beforeRowOrColumn = getArrayOfRowOrColumn(direction, randomRowOrColumn - 1, gridCells);
+  const beforeRowOrColumnOfBoat = beforeRowOrColumn.slice(indexOfFirstBoatCellOnRowOrColumn, indexOfFirstBoatCellOnRowOrColumn + boatSize);
+  makeArrayUnavailable(beforeRowOrColumnOfBoat);
+  
+  const afterRowOrColumn = getArrayOfRowOrColumn(direction, randomRowOrColumn + 1, gridCells);
+  const afterRowOrColumnOfBoat = afterRowOrColumn.slice(indexOfFirstBoatCellOnRowOrColumn, indexOfFirstBoatCellOnRowOrColumn + boatSize); 
+  makeArrayUnavailable(afterRowOrColumnOfBoat);
+
+  
+
+  const openingEdge = getOpeningEdge(direction, firstBoatCell);
+  const closingEdge = getClosingEdge(direction, firstBoatCell);
+
 }
 
+function makeArrayUnavailable(array) {
+  for (let i = 0; i < array.length; i++) {
+    array[i].isAvailableForBoat = false;
+  }
 
+}
 
+// function getOpeningEdge(direction, firstBoatCell) {
+//   const openingEdge = direction === 'x' ?  
 
+// }
 
+// function getClosingEdge(direction, firstBoatCell) {
 
-
-
-
-
-
-
-
-
-
-
+// }
 
 
 
@@ -245,5 +263,6 @@ function cellIdToRowIndex(cellId) {
   const returnIndex = lettersToIndex(cellId[0]);
   return returnIndex;
 }
+
 
 export default Utilities;
