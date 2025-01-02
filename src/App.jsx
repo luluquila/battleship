@@ -7,15 +7,10 @@ import Header from './components/Header';
 function App() {
 
   return (
-    <> 
     <MyRoot>
-    <Header></Header>
-
-    <TargetGrid></TargetGrid>
-
-
+      <Header></Header>
+      <TargetGrid></TargetGrid>
     </MyRoot>  
-    </>
   )
 }
 

@@ -1,39 +1,170 @@
 import GridCell from './GridCell';
-// import './Utilities';
+import Cell from '../models/Cell';
+import Boat from '../models/Boat';
+import { useState, useEffect } from 'react'
+
 
 function TargetGrid() {
+
+    const [gridCells, setGridCells] = useState([]);
+    useEffect(() => {
+        const theGrid = getTargetGrid();
+        console.log(theGrid);
+        const boatFleet = getFleet();
+        console.log(boatFleet);
+      
+      
+      
+      
+        for (let boat of boatFleet) {
+          const [startRow, startCol, direction] = getBoatPosition(boat.boatSize, theGrid);
+          boat.updateBoat(startRow, startCol, direction);
+          updateTargetGrid(boat, theGrid);
+        }
+      
+        setGridCells(theGrid);
+    }, []);
   
-  const gridCells = getTargetGrid();
+  
+  
 
 
-  // for (let boatSize = 5; boatSize > 1; boatSize--) {
-  //   setBoat(boatSize, gridCells);
-  // }
 
   return <div className="target-grid">
-    {gridCells.map((cell) => <GridCell key={cell.id} name={cell.id} waterOrBoat={cell.waterOrBoat}></GridCell>)}
+    {gridCells.map((cell) => <GridCell key={cell.row + "-" + cell.col} name={cell.row + "-" + cell.col} boatId={cell.boatId}></GridCell>)}
   </div>;
+
 }
+
 
 function getTargetGrid() {
   const gridCells = [];
-  for (let i = 1; i < 11; i++) {
-    for (let j = 1; j < 11; j++) {
-      const idName = toLetters(i - 1) + j;
-      gridCells.push({id: idName, waterOrBoat: "water", isAvailableForBoat: true});
+  for (let row = 1; row < 11; row++) {
+    for (let col = 1; col < 11; col++) {
+      gridCells.push(new Cell(row, col));
     }
   }
   return gridCells;
 }
 
+function getFleet() {
+  const boatFleet = [];
+  let boatId = 1;
+  for (let boatSize = 5; boatSize > 1; boatSize--) {
+    boatFleet.push(new Boat(boatId, boatSize));
+    boatId++;
+  }
+  return boatFleet;
+}
 
+function getBoatPosition(boatSize, gridCells) {
 
-function toLetters(rowIndex) {
-  const letters = ['a','b','c','d','e','f','g','h','i','j'];
-  return letters[rowIndex];
+  let isBoatValid = false;
+  let direction;
+  let randomRow;
+  let randomCol;
+
+  while (!isBoatValid) {
+
+    direction = getDirection();
+    console.log('direction ', direction);
+
+    randomRow = getRandomRow(direction, boatSize); 
+    console.log('random row', randomRow);
+
+    randomCol = getRandomCol(direction, boatSize);
+    console.log('random col', randomCol);
+
+    isBoatValid = isBoatPossible(randomRow, randomCol, direction, boatSize, gridCells);
+
+  }
+
+  return [randomRow, randomCol, direction];
+
 }
 
 
+
+function getDirection() {
+
+  return Math.floor(Math.random() * 2) === 0 ? 'x' : 'y';
+}
+
+
+function getRandomRow(direction, boatSize) {
+    let randomRow;
+
+    if (direction == 'y') {
+        randomRow = Math.floor(Math.random() * (11 - boatSize)) + 1; // up until an index which allows the boat to fit in the col, before edge
+    } else {
+      randomRow = Math.floor(Math.random() * 10) + 1;
+    }
+
+    return randomRow;
+
+}
+
+function getRandomCol(direction, boatSize) {
+    let randomCol;
+    
+    if (direction == 'x') {
+        randomCol = Math.floor(Math.random() * (11 - boatSize)) + 1; // same, but for row
+    } else {
+        randomCol = Math.floor(Math.random() * 10) + 1;
+    }
+    
+    return randomCol;
+}
+
+
+function isBoatPossible(randomRow, randomCol, direction, boatSize, gridCells) {
+  console.log('Inside isBoatPossible');
+
+    let currentCell;
+
+    if (direction === 'x') {
+        for (let i = 0; i < boatSize; i++) {
+            currentCell = gridCells.find((cell) => cell.row === randomRow && cell.col === randomCol + i);
+    
+            if (currentCell.boatId !== 0) {
+                return false;
+            }
+        }
+        
+    } else {
+        for (let i = 0; i < boatSize; i++) {
+            currentCell = gridCells.find((cell) => cell.row === randomRow + i && cell.col === randomCol);
+    
+            if (currentCell.boatId !== 0) {
+                return false;
+            }
+        }
+    }
+
+    return true;  
+
+}
+
+
+function updateTargetGrid(boat, gridCells) {
+    let currentCell;
+
+    if (boat.direction === 'x') {
+        for (let i = 0; i < boat.boatSize; i++) {
+            currentCell = gridCells.find((cell) => cell.row === boat.startRow && cell.col === boat.startCol + i);
+            currentCell.setBoatId(boat.boatId);
+    
+        }
+        
+    } else {
+        for (let i = 0; i < boat.boatSize; i++) {
+            currentCell = gridCells.find((cell) => cell.row === boat.startRow + i && cell.col === boat.startCol);
+            currentCell.setBoatId(boat.boatId);
+        }
+    }
+
+
+}
 
 
 export default TargetGrid;

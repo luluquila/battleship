@@ -1,11 +1,13 @@
 import { useState } from 'react'
 
-function GridCell({name, waterOrBoat}) {
+function GridCell({name, boatId}) {
 // Proper one
+  const waterOrBoat = boatId === 0 ? 'water' : 'boat';
   const [cellDisplay, setWaterOrBoat] = useState('grid-cell');
   const [hitMark, setHitMark] = useState(name); 
   
 //Temporary
+  // const waterOrBoat = boatId === 0 ? 'water' : 'boat';
   // const cellDisplay = 'grid-cell';
   // let hitMark;
 
