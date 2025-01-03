@@ -1,41 +1,26 @@
-import { useState } from 'react'
+function GridCell({cell, onCellClick}) {
+  let cellDisplay = 'grid-cell';
+  let cellHitMark = '';
 
-function GridCell({name, boatId}) {
-// Proper one
-  const waterOrBoat = boatId === 0 ? 'water' : 'boat';
-  const [cellDisplay, setWaterOrBoat] = useState('grid-cell');
-  const [hitMark, setHitMark] = useState(name); 
-  
-//Temporary
-  // const waterOrBoat = boatId === 0 ? 'water' : 'boat';
-  // const cellDisplay = 'grid-cell';
-  // let hitMark;
-
-//Temporary
-  // if (waterOrBoat === "boat") {
-  //   hitMark = 'X';
-  // } else if (waterOrBoat === "water") {
-  //   hitMark = '~';
-  // }
-
-
-// Proper one
-  const onClickHandle = () => {
-    setWaterOrBoat(`grid-cell-${waterOrBoat}`);
-    setHitMark(waterOrBoat === 'boat' ? 'X' : '.');
+  if (cell.isClicked) {
+    console.log('row', cell.row, ' col', cell.col);
+    cellDisplay = cell.boatId === 0 ? 'grid-cell-water' : 'grid-cell-boat';
+    cellHitMark = cell.boatId === 0 ? '' : 'X';
   }
 
+  const onClickHandle = () => {
+    if (cell.isClicked) {
+      return;
+    }
+    onCellClick(cell.row, cell.col)
 
-//Temporary
-  // return <div className={cellDisplay}>
-  //   {hitMark}
-  //   </div>;
+  }
 
-
-// Proper one
-  return <div className={cellDisplay} onClick={onClickHandle}>
-    {hitMark}
-    </div>;
+  return (
+    <div className={cellDisplay} onClick={onClickHandle}>
+      {cellHitMark}
+    </div>
+  );
 
 }
 
