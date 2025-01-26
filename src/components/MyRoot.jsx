@@ -70,7 +70,7 @@ const onCellClick = (row, col) => {
     <div className="my-root">
       <Header clickCount={clickCount} />
       <TargetGrid onCellClick={onCellClick} gridCells={gridCells} />
-      <GameOver />
+      {/* <GameOver /> */}
       <FleetContainer boatFleet={boatFleet} />
     </div>
   );
