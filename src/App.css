@@ -9,7 +9,26 @@
   background-color: lightblue;
   width: 100%;
   height: 10%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
   margin-bottom: 20px;
+}
+
+.title {
+  text-align: left;
+  width: 50%;
+  height: 100%;
+  
+
+}
+
+.counter {
+  text-align: right;
+  width: 50%;
+  height: 100%;
+  padding: 20px;
+  
 }
 
 .target-grid {
@@ -56,4 +75,47 @@
   transition-duration: 0.05s;
   padding: 3px;
   text-align: center;
+}
+
+.fleet-container {
+  width: 50%;
+  min-width: 380px;
+  max-width: 580px;
+  height: 200px;
+  background-color: #242424;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 60px;
+  padding: 30px;
+}
+
+.boat-2 {
+  width: 30px;
+  height: 60px;
+  background-color: #92817A;
+  margin: auto;
+  opacity: 0.0;
+}
+
+.boat-3 {
+  width: 30px;
+  height: 90px;
+  background-color: #82655a;
+  margin: auto;
+}
+
+.boat-4 {
+  width: 30px;
+  height: 120px;
+  background-color: #92817a;
+  margin: auto;
+}
+
+.boat-5 {
+  width: 30px;
+  height: 150px;
+  background-color: #82655a;
+  margin: auto;
 }

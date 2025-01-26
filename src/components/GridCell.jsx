@@ -3,13 +3,12 @@ function GridCell({cell, onCellClick}) {
   let cellHitMark = '';
 
   if (cell.isClicked) {
-    console.log('row', cell.row, ' col', cell.col);
     cellDisplay = cell.boatId === 0 ? 'grid-cell-water' : 'grid-cell-boat';
     cellHitMark = cell.boatId === 0 ? '' : 'X';
   }
 
   const onClickHandle = () => {
-    if (cell.isClicked) {
+    if (cell.isClicked) { // This is here so that the counter doesnt increase when you clicked a cell that was already clicked.
       return;
     }
     onCellClick(cell.row, cell.col)

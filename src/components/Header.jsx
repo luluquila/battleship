@@ -1,7 +1,7 @@
 function Header({clickCount}) {
   return <div className="header">
-    BattleShip
-    {clickCount}
+    <div className="title">Battleship</div>
+    <div className="counter">{clickCount}</div>
   </div>
 
 }

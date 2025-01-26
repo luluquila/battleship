@@ -5,12 +5,17 @@ export default class Boat {
         this.direction = 'x';
         this.boatId = boatId;
         this.boatSize = boatSize;
+        this.isSunk = false;
     }
 
     updateBoat(startRow, startCol, direction) {
         this.startRow = startRow;
         this.startCol = startCol;
         this.direction = direction;
+    }
+
+    sinkBoat(){
+        this.isSunk = true;
     }
 
 }

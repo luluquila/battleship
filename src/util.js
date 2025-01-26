@@ -1,7 +1,7 @@
 import Cell from './models/Cell';
 import Boat from './models/Boat';
 
-export default function getInitialState() {
+export function getInitialState() {
     const theGrid = getTargetGrid();
     const boatFleet = getFleet();
     
@@ -117,3 +117,58 @@ function updateTargetGrid(boat, gridCells) {
         }
     }
 }
+
+export function doesTheHitSinkABoat(gridCells, boatFleet, row, col) {
+    let hitCell = gridCells.find((cell) => cell.row === row && cell.col === col);
+
+    if (hitCell.boatId === 0) {
+        return false;
+    }
+
+    let currentBoat = boatFleet.find((boat) => boat.boatId === hitCell.boatId);
+
+    let numOfCellsHitInThisBoat = 0;
+    let currentCell;
+
+    if (currentBoat.direction === 'x') {
+        for (let i = 0; i < currentBoat.boatSize; i++) {
+            currentCell = gridCells.find((cell) => cell.row === currentBoat.startRow && cell.col === currentBoat.startCol + i);
+    
+            if (currentCell.isClicked) {
+                numOfCellsHitInThisBoat++;
+            }
+        }   
+    } else {
+        for (let i = 0; i < currentBoat.boatSize; i++) {
+            currentCell = gridCells.find((cell) => cell.row === currentBoat.startRow + i && cell.col === currentBoat.startCol);
+    
+            if (currentCell.isClicked) {
+                numOfCellsHitInThisBoat++;
+            }
+        }
+    }
+
+    if (numOfCellsHitInThisBoat === currentBoat.boatSize) {
+        return true;
+    }
+
+    return false;
+}
+
+export function doesTheHitWinTheGame(boatFleet, clickCount, maxNumberOfClicks){
+    let numOfBoatsSunk = 0;
+
+    for (let boat of boatFleet) {
+        if (boat.isSunk) {
+            numOfBoatsSunk++;
+        }
+    }
+
+    if (numOfBoatsSunk === 4 && clickCount <= maxNumberOfClicks) {
+        return true;
+    }
+
+    return false;
+}
+
+
